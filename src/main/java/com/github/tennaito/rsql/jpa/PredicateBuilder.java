@@ -252,7 +252,12 @@ public final class PredicateBuilder {
 	    		case EQUAL : {
 	    			Object argument = arguments.get(0);
 	    			if (argument instanceof String) {
-	    				return createLike(propertyPath, (String) argument, manager);
+	    				String stringArg = (String) argument;
+	    				if (stringArg.contains("*") || stringArg.contains("%")) {
+	    					return createLike(propertyPath, (String) argument, manager);
+	    				} else {
+	    					return createEqual(propertyPath, (String) argument, manager);
+	    				}
 	    			} else if (isNullArgument(argument)) {
 	    				return createIsNull(propertyPath, manager);
 	    			} else {
@@ -262,7 +267,12 @@ public final class PredicateBuilder {
 	    		case NOT_EQUAL : {
 	    			Object argument = arguments.get(0);
 	    			if (argument instanceof String) {
-	    				return createNotLike(propertyPath, (String) argument, manager);
+	    				String stringArg = (String) argument;
+	    				if (stringArg.contains("*") || stringArg.contains("%")) {	    				
+	    					return createNotLike(propertyPath, (String) argument, manager);
+	    				} else {
+	    					return createNotEqual(propertyPath, (String) argument, manager);
+	    				}
 	    			} else if (isNullArgument(argument)) {
 	    				return createIsNotNull(propertyPath, manager);
 	    			} else {
