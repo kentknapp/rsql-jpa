@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,6 +84,10 @@ public class DefaultArgumentParser implements ArgumentParser {
             return (T) parseDate(argument, type);
         }
 
+        if (type.equals(LocalDate.class)) {
+            return (T) parseLocalDate(argument, type);
+        }
+
         // try to parse via valueOf(String s) method
         try {
         	LOG.log(Level.INFO, "Trying to get and invoke valueOf(String s) method on {0}", type);
@@ -107,6 +112,11 @@ public class DefaultArgumentParser implements ArgumentParser {
         } catch (ParseException ex1) {
             throw new ArgumentFormatException(argument, type);
         }
+    }
+
+    private <T> LocalDate parseLocalDate(String argument, Class<T> type) {
+    	LocalDate date = LocalDate.parse(argument);
+    	return date;
     }
 
 	/* (non-Javadoc)
