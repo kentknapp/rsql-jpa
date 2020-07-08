@@ -30,6 +30,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,6 +89,10 @@ public class DefaultArgumentParser implements ArgumentParser {
         if (type.equals(LocalDate.class)) {
             return (T) parseLocalDate(argument, type);
         }
+        
+        if (type.equals(LocalDateTime.class)) {
+            return (T) parseLocalDateTime(argument, type);
+        }
 
         // try to parse via valueOf(String s) method
         try {
@@ -105,7 +111,7 @@ public class DefaultArgumentParser implements ArgumentParser {
         try {
             return new SimpleDateFormat(DATE_TIME_PATTERN).parse(argument);
         } catch (ParseException ex) {
-            LOG.log(Level.INFO, "Not a date time format, lets try with date format.");
+            //LOG.log(Level.INFO, "Not a date time format, lets try with date format.");
         }
         try {
             return new SimpleDateFormat(DATE_PATTERN).parse(argument);
@@ -119,6 +125,10 @@ public class DefaultArgumentParser implements ArgumentParser {
     	return date;
     }
 
+    private <T> LocalDateTime parseLocalDateTime(String argument, Class<T> type) {
+    	return LocalDateTime.ofInstant(parseDate(argument, type).toInstant(), ZoneId.of("UTC"));
+    }
+    
 	/* (non-Javadoc)
 	 * @see br.tennaito.rsql.misc.ArgumentParser#parse(java.util.List, java.lang.Class)
 	 */
