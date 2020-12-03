@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,21 +78,12 @@ public class DefaultArgumentParser implements ArgumentParser {
             if (type.equals(Double.class)  || type.equals(double.class)) return (T) Double.valueOf(argument);
             if (type.equals(Long.class)    || type.equals(long.class)) return (T) Long.valueOf(argument);
             if (type.equals(BigDecimal.class) ) return (T) new BigDecimal(argument);
+            if (type.equals(Date.class)) return (T) parseDate(argument, type);
+            if (type.equals(LocalDate.class)) return (T) parseLocalDate(argument, type);
+            if (type.equals(LocalDateTime.class)) return (T) parseLocalDateTime(argument, type);
+            if (type.equals(LocalTime.class)) return (T) parseLocalTime(argument, type);
         } catch (IllegalArgumentException ex) {
             throw new ArgumentFormatException(argument, type);
-        }
-
-        // date
-        if (type.equals(Date.class)) {
-            return (T) parseDate(argument, type);
-        }
-
-        if (type.equals(LocalDate.class)) {
-            return (T) parseLocalDate(argument, type);
-        }
-        
-        if (type.equals(LocalDateTime.class)) {
-            return (T) parseLocalDateTime(argument, type);
         }
 
         // try to parse via valueOf(String s) method
@@ -105,6 +97,11 @@ public class DefaultArgumentParser implements ArgumentParser {
         	LOG.log(Level.WARNING, "{0} does not have method valueOf(String s) or method is inaccessible", type);
         	throw new IllegalArgumentException("Cannot parse argument type " + type);
         }
+    }
+
+    private <T> Object parseLocalTime(String argument, Class<T> type) {
+        LocalTime time = LocalTime.parse(argument);
+        return time;
     }
 
     private <T> Date parseDate(String argument, Class<T> type) {
